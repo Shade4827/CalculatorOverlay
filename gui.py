@@ -15,6 +15,8 @@ class Application(tk.Frame):
         self.CreateMenubar()
         self.CreateWigets(1)
         self.CreateWigets(2)
+        img=Image.open("test.jpg")
+        self.DisplayImage(image=img)
 
     #メニューバーを作成
     def CreateMenubar(self): 
@@ -35,7 +37,7 @@ class Application(tk.Frame):
         #configmenu.add_command(label="ChangePlace")
         self.menubar.add_cascade(label="Config", menu=configMenu)
 
-        lpMenu = tk.Menu(selｆ.menubar, tearoff=0)
+        lpMenu = tk.Menu(self.menubar, tearoff=0)
         #ダメージログ
         lpMenu.add_command(label="Log")
         lpMenu.add_separator()
@@ -51,7 +53,11 @@ class Application(tk.Frame):
         boxX = 160
         if(num==2):
             boxX = 900
-        boxY = 660
+        boxY = 740
+
+        #画像を表示するキャンバス
+        self.canvas = tk.Canvas(root,width=1280,height=720,relief=tk.RIDGE,bd=0)
+        self.canvas.place(x=0,y=10)
 
         #名前入力バー
         nameBox = tk.Entry(width=30,font=("",15))
@@ -76,11 +82,15 @@ class Application(tk.Frame):
         changeButton=tk.Button(root,text="変更",width=3,font=("",15))
         changeButton.place(x=boxX-45,y=boxY+30)
         
+    def DisplayImage(self,image):
+        #self.img_temp = ImageTk.PhotoImage(Image.fromarray(image))
+        self.disp = ImageTk.PhotoImage(image)
+        self.canvas.create_image(0,0,image=self.disp,anchor=tk.NW)
 
 # 実行
 root = tk.Tk()        
 myapp = Application(master=root)
 myapp.master.title("CalculatorOverlay") # タイトル
-myapp.master.geometry("1280x720") # ウィンドウの幅と高さピクセル単位で指定（width x height）
+myapp.master.geometry("1280x800") # ウィンドウの幅と高さピクセル単位で指定（width x height）
 
 myapp.mainloop()
