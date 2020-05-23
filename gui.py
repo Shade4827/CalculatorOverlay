@@ -15,8 +15,13 @@ class Application(tk.Frame):
         self.CreateMenubar()
         self.CreateWigets(1)
         self.CreateWigets(2)
-        img=Image.open("test.jpg")
+        img = Image.open("test.jpg")
         self.DisplayImage(image=img)
+        self.pl1Name = "Player1"
+        self.pl2Name = "Player2"
+        self.lp1 = 8000
+        self.lp2 = 8000
+        self.DisplayLP()
 
     #メニューバーを作成
     def CreateMenubar(self): 
@@ -60,12 +65,12 @@ class Application(tk.Frame):
         self.canvas.place(x=0,y=10)
 
         #名前入力バー
-        nameBox = tk.Entry(width=30,font=("",15))
-        nameBox.place(x=boxX,y=boxY)
-        nameBox.insert(tk.END,'PLAYER'+str(num))
+        self.nameBox = tk.Entry(width=30,font=("",15))
+        self.nameBox.place(x=boxX,y=boxY)
+        self.nameBox.insert(tk.END,'PLAYER'+str(num))
         #LP入力バー
-        lpBox = tk.Entry(width=30,font=("",15))
-        lpBox.place(x=boxX,y=boxY+30)
+        self.lpBox = tk.Entry(width=30,font=("",15))
+        self.lpBox.place(x=boxX,y=boxY+30)
 
         #btn=tk.Button(root,text="test",width=5)
         #btn.place(x=20,y=20)
@@ -81,11 +86,21 @@ class Application(tk.Frame):
         #変更ボタン
         changeButton=tk.Button(root,text="変更",width=3,font=("",15))
         changeButton.place(x=boxX-45,y=boxY+30)
-        
+    
+    #映像を表示
     def DisplayImage(self,image):
         #self.img_temp = ImageTk.PhotoImage(Image.fromarray(image))
         self.disp = ImageTk.PhotoImage(image)
         self.canvas.create_image(0,0,image=self.disp,anchor=tk.NW)
+
+    #LPを表示
+    def DisplayLP(self):
+        pl1Text = self.pl1Name + "\nLP:" + str(self.lp1)
+        lp1Label = tk.Label(root,text=pl1Text,font=("",30),forefroundfg=(),justify="left")
+        lp1Label.place(x=20,y=20)
+        pl2Text = self.pl2Name "\nLP:" + str(self.lp2)
+        lp2Label = tk.Label(root,text=pl2Text,font=("",30),justify="right")
+        lp2Label.place(x=1120,y=20)
 
 # 実行
 root = tk.Tk()        
