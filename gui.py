@@ -3,66 +3,84 @@ import sys
 import os
 import numpy as np
 import tkinter as tk
-
 import tkinter.ttk as ttk
+#import image
 from PIL import Image, ImageTk
-from tkinter import messagebox as tkMessageBox
-from tkinter import filedialog as tkFileDialog
 
 # アプリケーション（GUI）クラス
 class Application(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self.pack()
-
         self.CreateMenubar()
-        self.CreateWigets()
+        self.CreateWigets(1)
+        self.CreateWigets(2)
 
     #メニューバーを作成
     def CreateMenubar(self): 
         self.menubar = tk.Menu(root)
 
-        filemenu = tk.Menu(self.menubar, tearoff=0)
+        #終了
+        fileMenu = tk.Menu(self.menubar, tearoff=0)
         #filemenu.add_command(label="Open", command=self.File_open)
-        filemenu.add_separator()
-        filemenu.add_command(label="Exit", command=root.quit)
-        self.menubar.add_cascade(label="File", menu=filemenu)
+        fileMenu.add_separator()
+        fileMenu.add_command(label="Exit", command=root.quit)
+        self.menubar.add_cascade(label="File", menu=fileMenu)
 
-        editmenu = tk.Menu(self.menubar, tearoff=0)
-        #editmenu.add_command(label="Grayscale", command=self.Proc_grayscale)
-        #editmenu.add_command(label="Binarize", command=self.Proc_binarize)
-        self.menubar.add_cascade(label="Processing", menu=editmenu)
+        configMenu = tk.Menu(self.menubar, tearoff=0)
+        #文字色変更
+        configMenu.add_command(label="ChangeColor")
+        #configmenu.add_separator()
+        #(表示位置変更)
+        #configmenu.add_command(label="ChangePlace")
+        self.menubar.add_cascade(label="Config", menu=configMenu)
+
+        lpMenu = tk.Menu(selｆ.menubar, tearoff=0)
+        #ダメージログ
+        lpMenu.add_command(label="Log")
+        lpMenu.add_separator()
+        #LP初期化
+        lpMenu.add_command(label="Reset")
+        self.menubar.add_cascade(label="LifePoint", menu=lpMenu)
 
         root.config(menu=self.menubar)
         root.config()
 
-    #ボタンを作成
-    def CreateWigets(self):
-        pw_main = tk.PanedWindow(self.master, orient='horizontal')
-        pw_main.pack(expand=True, fill = tk.BOTH, side="left")
+    #ボタン等を作成
+    def CreateWigets(self,num):
+        boxX = 160
+        if(num==2):
+            boxX = 900
+        boxY = 660
 
-        pw_left = tk.PanedWindow(pw_main, bg="cyan", orient='vertical')
-        pw_main.add(pw_left)
-        pw_right = tk.PanedWindow(pw_main, bg="yellow", orient='vertical')
-        pw_main.add(pw_right)
+        #名前入力バー
+        nameBox = tk.Entry(width=30,font=("",15))
+        nameBox.place(x=boxX,y=boxY)
+        nameBox.insert(tk.END,'PLAYER'+str(num))
+        #LP入力バー
+        lpBox = tk.Entry(width=30,font=("",15))
+        lpBox.place(x=boxX,y=boxY+30)
 
-        fm_select = tk.Frame(pw_left, bd=2, relief="ridge")
-        pw_left.add(fm_select)
-
-        ## padx , pady ：外側の横、縦の隙間
-        label_fpath = tk.Label(fm_select, text="ファイルパス(入力)", width=20)
-        ## ラベルを配置
-        label_fpath.grid(row=0, column=0, padx=2, pady=2)
-
-        entry_fpath = tk.Entry(fm_select, justify="left", width=50)
-        entry_fpath.grid(row=0, column=1, sticky=tk.W + tk.E,padx=2, pady=2)
-
-
+        #btn=tk.Button(root,text="test",width=5)
+        #btn.place(x=20,y=20)
+        #+ボタン
+        plusButton=tk.Button(root,text="+",width=3,font=("",15))
+        plusButton.place(x=boxX-87,y=boxY-5)
+        #-ボタン
+        minusButton=tk.Button(root,text="-",width=3,font=("",15))
+        minusButton.place(x=boxX-45,y=boxY-5)
+        #÷ボタン
+        divButton=tk.Button(root,text="÷",width=3,font=("",15))
+        divButton.place(x=boxX-87,y=boxY+30)
+        #変更ボタン
+        changeButton=tk.Button(root,text="変更",width=3,font=("",15))
+        changeButton.place(x=boxX-45,y=boxY+30)
+        
 
 # 実行
 root = tk.Tk()        
 myapp = Application(master=root)
-myapp.master.title("My Application") # タイトル
-myapp.master.geometry("1000x500") # ウィンドウの幅と高さピクセル単位で指定（width x height）
+myapp.master.title("CalculatorOverlay") # タイトル
+myapp.master.geometry("1280x720") # ウィンドウの幅と高さピクセル単位で指定（width x height）
 
 myapp.mainloop()
