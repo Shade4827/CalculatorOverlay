@@ -6,21 +6,21 @@ import tkinter as tk
 import tkinter.ttk as ttk
 #import image
 from PIL import Image, ImageTk
+from functools import partial
 
 # アプリケーション（GUI）クラス
 class Application(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self.pack()
-        self.CreateMenubar()
-        self.CreateWigets(1)
-        self.CreateWigets(2)
+
         img = Image.open("test.jpg")
+        self.plName = ["Player1","Player2"]
+        self.lp = [8000,8000]
+
+        self.CreateMenubar()
+        self.CreateWigets()
         self.DisplayImage(image=img)
-        self.pl1Name = "Player1"
-        self.pl2Name = "Player2"
-        self.lp1 = 8000
-        self.lp2 = 8000
         self.DisplayLP()
 
     #メニューバーを作成
@@ -54,38 +54,43 @@ class Application(tk.Frame):
         root.config()
 
     #ボタン等を作成
-    def CreateWigets(self,num):
+    def CreateWigets(self):
         boxX = 160
-        if(num==2):
-            boxX = 900
-        boxY = 740
+        boxY = 740-200
 
         #画像を表示するキャンバス
         self.canvas = tk.Canvas(root,width=1280,height=720,relief=tk.RIDGE,bd=0)
         self.canvas.place(x=0,y=10)
 
         #名前入力バー
-        self.nameBox = tk.Entry(width=30,font=("",15))
-        self.nameBox.place(x=boxX,y=boxY)
-        self.nameBox.insert(tk.END,'PLAYER'+str(num))
+        self.nameBox = [tk.Entry(width=30,font=("",15)),tk.Entry(width=30,font=("",15))]
         #LP入力バー
-        self.lpBox = tk.Entry(width=30,font=("",15))
-        self.lpBox.place(x=boxX,y=boxY+30)
-
-        #btn=tk.Button(root,text="test",width=5)
-        #btn.place(x=20,y=20)
+        self.lpBox = [tk.Entry(width=30,font=("",15)),tk.Entry(width=30,font=("",15))]
         #+ボタン
-        plusButton=tk.Button(root,text="+",width=3,font=("",15))
-        plusButton.place(x=boxX-87,y=boxY-5)
-        #-ボタン
-        minusButton=tk.Button(root,text="-",width=3,font=("",15))
-        minusButton.place(x=boxX-45,y=boxY-5)
+        #plusButton = [tk.Button(root,text="+",width=3,font=("",15),command=partial(self.AddLP,0)),tk.Button(root,text="+",width=3,font=("",15),command=partial(self.AddLP,1))]
+        #minusButton=[tk.Button(root,text="-",width=3,font=("",15)),tk.Button(root,text="-",width=3,font=("",15))]
         #÷ボタン
-        divButton=tk.Button(root,text="÷",width=3,font=("",15))
-        divButton.place(x=boxX-87,y=boxY+30)
+        #divButton=[tk.Button(root,text="÷",width=3,font=("",15)),tk.Button(root,text="÷",width=3,font=("",15))]
         #変更ボタン
-        changeButton=tk.Button(root,text="変更",width=3,font=("",15))
-        changeButton.place(x=boxX-45,y=boxY+30)
+        #changeButton=[tk.Button(root,text="変更",width=3,font=("",15)),tk.Button(root,text="変更",width=3,font=("",15))]
+
+        for i in range(2):
+            self.nameBox[i].place(x=boxX,y=boxY)
+            self.nameBox[i].insert(tk.END,'PLAYER'+str(i+1))
+
+            self.lpBox[i].place(x=boxX,y=boxY+30)
+            self.lpBox
+
+            plusButton = tk.Button(root,text="+",width=3,font=("",15),command=partial(self.AddLP,i))
+            plusButton.place(x=boxX-87,y=boxY-5)
+            minusButton = tk.Button(root,text="-",width=3,font=("",15),command=partial(self.SubLP,i))
+            minusButton.place(x=boxX-45,y=boxY-5)
+            divButton = tk.Button(root,text="÷",width=3,font=("",15),command=partial(self.DivLP,i))
+            divButton.place(x=boxX-87,y=boxY+30)
+            changeButton = tk.Button(root,text="変更",width=3,font=("",15),command=partial(self.ChangeLP,i))
+            changeButton.place(x=boxX-45,y=boxY+30)
+            
+            boxX = 900
     
     #映像を表示
     def DisplayImage(self,image):
@@ -95,12 +100,44 @@ class Application(tk.Frame):
 
     #LPを表示
     def DisplayLP(self):
-        pl1Text = self.pl1Name + "\nLP:" + str(self.lp1)
-        lp1Label = tk.Label(root,text=pl1Text,font=("",30),forefroundfg=(),justify="left")
-        lp1Label.place(x=20,y=20)
-        pl2Text = self.pl2Name "\nLP:" + str(self.lp2)
-        lp2Label = tk.Label(root,text=pl2Text,font=("",30),justify="right")
-        lp2Label.place(x=1120,y=20)
+        pl1Text = self.plName[0] + "\nLP:" + str(self.lp[0])
+        self.lp1Label = tk.Label(root,text=pl1Text,font=("",30),justify="left")
+        self.lp1Label.place(x=20,y=20)
+        pl2Text = self.plName[1] + "\nLP:" + str(self.lp[1])
+        self.lp2Label = tk.Label(root,text=pl2Text,font=("",30),justify="right")
+        self.lp2Label.place(x=1120,y=20)
+
+    #LP加算
+    def AddLP(self,num):
+        val = self.lpBox[num].get()
+        self.lp[num] += int(val)
+        self.lpBox[num].delete(0,tk.END)
+        self.lp1Label.destroy()
+        self.DisplayLP()
+
+    #LP減算
+    def SubLP(self,num):
+        val = int(self.lpBox[num].get())
+        self.lp[num] -= val
+        self.lpBox[num].delete(0,tk.END)
+        self.lp1Label.destroy()
+        self.DisplayLP()
+
+    #LP除算
+    def DivLP(self,num):
+        self.lp[num] /= 2
+        self.lpBox[num].delete(0,tk.END)
+        self.lp1Label.destroy()
+        self.DisplayLP()
+
+    #LP変更
+    def ChangeLP(self,num):
+        val = int(self.lpBox[num].get())
+        self.lp[num] = val
+        self.lpBox[num].delete(0,tk.END)
+        self.lp1Label.destroy()
+        self.DisplayLP()
+
 
 # 実行
 root = tk.Tk()        
