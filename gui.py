@@ -16,12 +16,16 @@ class Application(tk.Frame):
 
         img = Image.open("test.jpg")
         self.plName = ["Player1","Player2"]
+        self.boxPlace = [[160,740-200],[900,740-200]]
         self.lp = [8000,8000]
+        self.lpPlace = [[20,20],[1120,20]]
+        self.lpLabel = [tk.Label(root),tk.Label(root)]
 
         self.CreateMenubar()
         self.CreateWigets()
         self.DisplayImage(image=img)
-        self.DisplayLP()
+        self.DisplayLP(0)
+        self.DisplayLP(1)
 
     #メニューバーを作成
     def CreateMenubar(self): 
@@ -29,15 +33,10 @@ class Application(tk.Frame):
 
         #終了
         fileMenu = tk.Menu(self.menubar, tearoff=0)
-        #filemenu.add_command(label="Open", command=self.File_open)
-        fileMenu.add_separator()
         fileMenu.add_command(label="Exit", command=root.quit)
         self.menubar.add_cascade(label="File", menu=fileMenu)
 
         configMenu = tk.Menu(self.menubar, tearoff=0)
-        #文字色変更
-        configMenu.add_command(label="ChangeColor")
-        #configmenu.add_separator()
         #(表示位置変更)
         #configmenu.add_command(label="ChangePlace")
         self.menubar.add_cascade(label="Config", menu=configMenu)
@@ -47,7 +46,7 @@ class Application(tk.Frame):
         lpMenu.add_command(label="Log")
         lpMenu.add_separator()
         #LP初期化
-        lpMenu.add_command(label="Reset")
+        lpMenu.add_command(label="Reset",command=self.initLP)
         self.menubar.add_cascade(label="LifePoint", menu=lpMenu)
 
         root.config(menu=self.menubar)
@@ -55,9 +54,6 @@ class Application(tk.Frame):
 
     #ボタン等を作成
     def CreateWigets(self):
-        boxX = 160
-        boxY = 740-200
-
         #画像を表示するキャンバス
         self.canvas = tk.Canvas(root,width=1280,height=720,relief=tk.RIDGE,bd=0)
         self.canvas.place(x=0,y=10)
@@ -66,31 +62,21 @@ class Application(tk.Frame):
         self.nameBox = [tk.Entry(width=30,font=("",15)),tk.Entry(width=30,font=("",15))]
         #LP入力バー
         self.lpBox = [tk.Entry(width=30,font=("",15)),tk.Entry(width=30,font=("",15))]
-        #+ボタン
-        #plusButton = [tk.Button(root,text="+",width=3,font=("",15),command=partial(self.AddLP,0)),tk.Button(root,text="+",width=3,font=("",15),command=partial(self.AddLP,1))]
-        #minusButton=[tk.Button(root,text="-",width=3,font=("",15)),tk.Button(root,text="-",width=3,font=("",15))]
-        #÷ボタン
-        #divButton=[tk.Button(root,text="÷",width=3,font=("",15)),tk.Button(root,text="÷",width=3,font=("",15))]
-        #変更ボタン
-        #changeButton=[tk.Button(root,text="変更",width=3,font=("",15)),tk.Button(root,text="変更",width=3,font=("",15))]
 
         for i in range(2):
-            self.nameBox[i].place(x=boxX,y=boxY)
+            self.nameBox[i].place(x=self.boxPlace[i][0],y=self.boxPlace[i][1])
             self.nameBox[i].insert(tk.END,'PLAYER'+str(i+1))
 
-            self.lpBox[i].place(x=boxX,y=boxY+30)
-            self.lpBox
+            self.lpBox[i].place(x=self.boxPlace[i][0],y=self.boxPlace[i][1]+30)
 
             plusButton = tk.Button(root,text="+",width=3,font=("",15),command=partial(self.AddLP,i))
-            plusButton.place(x=boxX-87,y=boxY-5)
+            plusButton.place(x=self.boxPlace[i][0]-87,y=self.boxPlace[i][1]-5)
             minusButton = tk.Button(root,text="-",width=3,font=("",15),command=partial(self.SubLP,i))
-            minusButton.place(x=boxX-45,y=boxY-5)
+            minusButton.place(x=self.boxPlace[i][0]-45,y=self.boxPlace[i][1]-5)
             divButton = tk.Button(root,text="÷",width=3,font=("",15),command=partial(self.DivLP,i))
-            divButton.place(x=boxX-87,y=boxY+30)
+            divButton.place(x=self.boxPlace[i][0]-87,y=self.boxPlace[i][1]+30)
             changeButton = tk.Button(root,text="変更",width=3,font=("",15),command=partial(self.ChangeLP,i))
-            changeButton.place(x=boxX-45,y=boxY+30)
-            
-            boxX = 900
+            changeButton.place(x=self.boxPlace[i][0]-45,y=self.boxPlace[i][1]+30)
     
     #映像を表示
     def DisplayImage(self,image):
@@ -99,44 +85,60 @@ class Application(tk.Frame):
         self.canvas.create_image(0,0,image=self.disp,anchor=tk.NW)
 
     #LPを表示
-    def DisplayLP(self):
-        pl1Text = self.plName[0] + "\nLP:" + str(self.lp[0])
-        self.lp1Label = tk.Label(root,text=pl1Text,font=("",30),justify="left")
-        self.lp1Label.place(x=20,y=20)
-        pl2Text = self.plName[1] + "\nLP:" + str(self.lp[1])
-        self.lp2Label = tk.Label(root,text=pl2Text,font=("",30),justify="right")
-        self.lp2Label.place(x=1120,y=20)
+    def DisplayLP(self,num):
+        just = "left"
+        if num == 1:
+            just = "right"
+
+        self.lp[num] = round((self.lp[num] * 2 + 1) // 2)
+
+        plText = self.plName[num] + "\nLP:" + str(self.lp[num])
+        self.lpLabel[num] = tk.Label(root,text=plText,font=("",30),justify=just)
+        self.lpLabel[num].place(x=self.lpPlace[num][0],y=self.lpPlace[num][1])
 
     #LP加算
     def AddLP(self,num):
         val = self.lpBox[num].get()
         self.lp[num] += int(val)
         self.lpBox[num].delete(0,tk.END)
-        self.lp1Label.destroy()
-        self.DisplayLP()
+        self.lpLabel[num].destroy()
+        self.DisplayLP(num)
 
     #LP減算
     def SubLP(self,num):
         val = int(self.lpBox[num].get())
         self.lp[num] -= val
+        if self.lp[num] <= 0:
+            self.lp[num] = 0
         self.lpBox[num].delete(0,tk.END)
-        self.lp1Label.destroy()
-        self.DisplayLP()
+        self.lpLabel[num].destroy()
+        self.DisplayLP(num)
 
     #LP除算
     def DivLP(self,num):
         self.lp[num] /= 2
         self.lpBox[num].delete(0,tk.END)
-        self.lp1Label.destroy()
-        self.DisplayLP()
+        self.lpLabel[num].destroy()
+        self.DisplayLP(num)
 
     #LP変更
     def ChangeLP(self,num):
         val = int(self.lpBox[num].get())
         self.lp[num] = val
         self.lpBox[num].delete(0,tk.END)
-        self.lp1Label.destroy()
-        self.DisplayLP()
+        self.lpLabel[num].destroy()
+        self.DisplayLP(num)
+
+    #ダメージログ
+    def DisplayLog(self):
+
+
+    #LP初期化
+    def initLP(self):
+        for i in range(2):
+            self.lp[i] = 8000
+            self.lpLabel[i].destroy()
+            self.DisplayLP(i)
 
 
 # 実行
