@@ -7,6 +7,7 @@ import tkinter.ttk as ttk
 #import image
 from PIL import Image, ImageTk
 from functools import partial
+from tkinter import messagebox
 
 # アプリケーション（GUI）クラス
 class Application(tk.Frame):
@@ -20,6 +21,7 @@ class Application(tk.Frame):
         self.lp = [8000,8000]
         self.lpPlace = [[20,20],[1120,20]]
         self.lpLabel = [tk.Label(root),tk.Label(root)]
+        self.damageLog = [[8000],[8000]]
 
         self.CreateMenubar()
         self.CreateWigets()
@@ -43,7 +45,7 @@ class Application(tk.Frame):
 
         lpMenu = tk.Menu(self.menubar, tearoff=0)
         #ダメージログ
-        lpMenu.add_command(label="Log")
+        lpMenu.add_command(label="Log",command=self.DisplayLog)
         lpMenu.add_separator()
         #LP初期化
         lpMenu.add_command(label="Reset",command=self.initLP)
@@ -91,8 +93,10 @@ class Application(tk.Frame):
             just = "right"
 
         self.lp[num] = round((self.lp[num] * 2 + 1) // 2)
+        self.AppendLog()
 
         plText = self.plName[num] + "\nLP:" + str(self.lp[num])
+        self.lpLabel[num].destroy()
         self.lpLabel[num] = tk.Label(root,text=plText,font=("",30),justify=just)
         self.lpLabel[num].place(x=self.lpPlace[num][0],y=self.lpPlace[num][1])
 
@@ -101,7 +105,6 @@ class Application(tk.Frame):
         val = self.lpBox[num].get()
         self.lp[num] += int(val)
         self.lpBox[num].delete(0,tk.END)
-        self.lpLabel[num].destroy()
         self.DisplayLP(num)
 
     #LP減算
@@ -111,34 +114,48 @@ class Application(tk.Frame):
         if self.lp[num] <= 0:
             self.lp[num] = 0
         self.lpBox[num].delete(0,tk.END)
-        self.lpLabel[num].destroy()
         self.DisplayLP(num)
 
     #LP除算
     def DivLP(self,num):
         self.lp[num] /= 2
         self.lpBox[num].delete(0,tk.END)
-        self.lpLabel[num].destroy()
         self.DisplayLP(num)
 
     #LP変更
     def ChangeLP(self,num):
-        val = int(self.lpBox[num].get())
+        text = self.lpBox[num].get()
+        if text == "":
+            return
+
+        val = int(text)
         self.lp[num] = val
         self.lpBox[num].delete(0,tk.END)
-        self.lpLabel[num].destroy()
         self.DisplayLP(num)
 
-    #ダメージログ
-    def DisplayLog(self):
+    #ダメージログに追加
+    def AppendLog(self):
+        if self.damageLog[0][-1] == self.lp[0] and self.damageLog[1][-1] == self.lp[1]:
+            return 
 
+        self.damageLog[0].append(self.lp[0])
+        self.damageLog[1].append(self.lp[1])
+
+    #ダメージログを表示
+    def DisplayLog(self):
+        message = self.plName[0] + "\t" + self.plName[1] + "\n"
+        for i in range(len(self.damageLog[0])):
+            message += str(self.damageLog[0][i]) + "\t" + str(self.damageLog[1][i]) + "\n"
+
+        messagebox.showinfo("Damage Log", message)
 
     #LP初期化
     def initLP(self):
         for i in range(2):
             self.lp[i] = 8000
-            self.lpLabel[i].destroy()
             self.DisplayLP(i)
+
+        self.damageLog = [[8000],[8000]]
 
 
 # 実行
