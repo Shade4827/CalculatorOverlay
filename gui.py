@@ -4,7 +4,7 @@ import os
 import numpy as np
 import tkinter as tk
 import tkinter.ttk as ttk
-#import image
+import camera
 from PIL import Image, ImageTk
 from functools import partial
 from tkinter import messagebox,simpledialog
@@ -84,7 +84,8 @@ class Application(tk.Frame):
     
     #映像を表示
     def DisplayImage(self,image):
-        #self.img_temp = ImageTk.PhotoImage(Image.fromarray(image))
+        
+        self.img_temp = ImageTk.PhotoImage(Image.fromarray(image))
         self.disp = ImageTk.PhotoImage(image)
         self.canvas.create_image(0,0,image=self.disp,anchor=tk.NW)
 

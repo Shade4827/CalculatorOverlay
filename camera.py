@@ -30,18 +30,3 @@ def ReadImage():
 def ReleaseCapture():
     global capture
     capture.release()
-
-CheckCameraConnection()
-
-while(True):
-    frame = ReadImage()
-    cv2.imshow('camera',frame)
-    
-    key = cv2.waitKey(1) & 0xff
-    if key == ord('c'):
-        ChangeCamera(1)
-    elif key == ord('q'):
-        break
-
-ReleaseCapture()
-cv2.destroyAllWindows()
