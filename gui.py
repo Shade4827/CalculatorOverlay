@@ -7,7 +7,7 @@ import tkinter.ttk as ttk
 #import image
 from PIL import Image, ImageTk
 from functools import partial
-from tkinter import messagebox
+from tkinter import messagebox,simpledialog
 
 # アプリケーション（GUI）クラス
 class Application(tk.Frame):
@@ -17,7 +17,7 @@ class Application(tk.Frame):
 
         img = Image.open("test.jpg")
         self.plName = ["Player1","Player2"]
-        self.boxPlace = [[160,740-200],[900,740-200]]
+        self.boxPlace = [[160,740],[900,740]]
         self.lp = [8000,8000]
         self.lpPlace = [[20,20],[1120,20]]
         self.lpLabel = [tk.Label(root),tk.Label(root)]
@@ -39,6 +39,8 @@ class Application(tk.Frame):
         self.menubar.add_cascade(label="File", menu=fileMenu)
 
         configMenu = tk.Menu(self.menubar, tearoff=0)
+        #カメラ切替
+        configMenu.add_command(label="ChangeCamera",command=self.SetCamera)
         #(表示位置変更)
         #configmenu.add_command(label="ChangePlace")
         self.menubar.add_cascade(label="Config", menu=configMenu)
@@ -85,6 +87,15 @@ class Application(tk.Frame):
         #self.img_temp = ImageTk.PhotoImage(Image.fromarray(image))
         self.disp = ImageTk.PhotoImage(image)
         self.canvas.create_image(0,0,image=self.disp,anchor=tk.NW)
+
+    #カメラ切替
+    def SetCamera(self):
+        #カメラの番号を取得
+        num = 10
+        message = "カメラ番号(0~"+ str(num) +")を入力してください"
+        cameraNum = simpledialog.askstring("Input Box", message,)
+        #カメラ切替
+        print(cameraNum)
 
     #LPを表示
     def DisplayLP(self,num):
