@@ -4,7 +4,22 @@ import cv2
 
 capture = cv2.VideoCapture(0)
 
+def CheckCameraConnection():
+    true_camera_is = []  # 空の配列を用意
+
+    # カメラ番号を0～9まで変えて、COM_PORTに認識されているカメラを探す
+    for cameraNum in range(0, 10):
+        cap = cv2.VideoCapture(cameraNum)
+        ret, frame = cap.read()
+
+        if ret is True:
+            true_camera_is.append(cameraNum)
+
+    return len(true_camera_is)
+
 def ChangeCamera(num):
+    global capture
+    capture.release()
     capture = cv2.VideoCapture(num)
 
 def ReadImage():
@@ -12,14 +27,21 @@ def ReadImage():
     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     return frame
 
-def releaseCapture():
+def ReleaseCapture():
+    global capture
     capture.release()
 
-#while(True):
-#    ret,frame = capture.read()
-#    cv2.imshow('camera',frame)
-#    if cv2.waitKey(1) & 0xFF == ord('q'):
-#        break
+CheckCameraConnection()
 
-#capture.release()
-#cv2.destroyAllWindows()
+while(True):
+    frame = ReadImage()
+    cv2.imshow('camera',frame)
+    
+    key = cv2.waitKey(1) & 0xff
+    if key == ord('c'):
+        ChangeCamera(1)
+    elif key == ord('q'):
+        break
+
+ReleaseCapture()
+cv2.destroyAllWindows()
