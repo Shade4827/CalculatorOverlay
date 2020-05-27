@@ -23,7 +23,9 @@ class Application(tk.Frame):
         self.damageLog = [[8000],[8000]]
         self.cameraNum = 0
         self.cameras = camera.CheckCameraConnection()
-        
+        self.replaceImage = Image.open("rep.jpg")
+        self.replaceImage = ImageTk.PhotoImage(self.replaceImage)
+
         self.CreateMenubar()
         self.CreateWigets()
         self.DisplayImage()
@@ -85,8 +87,13 @@ class Application(tk.Frame):
     #映像を表示
     def DisplayImage(self):
         self.frame = camera.ReadImage()
-        self.img = ImageTk.PhotoImage(Image.fromarray(self.frame))
-        self.canvas.create_image(0,0,image=self.img,anchor=tk.NW)
+        if self.frame is None:
+            self.canvas.delete("all")
+            self.canvas.create_image(0,0,image=self.replaceImage,anchor=tk.NW)
+        else:
+            self.frame = camera.ReadImage()
+            self.img = ImageTk.PhotoImage(Image.fromarray(self.frame))
+            self.canvas.create_image(0,0,image=self.img,anchor=tk.NW)
         
         self.master.after(50,self.DisplayImage)
 
@@ -96,11 +103,11 @@ class Application(tk.Frame):
         message = "現在のカメラ番号:" + str(self.cameraNum) + "\nカメラ番号(0~"+ str(self.cameras) +")を入力してください"
         tmp = self.cameraNum
         self.cameraNum = simpledialog.askstring("Input Box", message)
-        if self.cameraNum is None:
+        if self.cameraNum is None or int(self.cameraNum) > self.cameras:
             self.cameraNum = tmp
             return
         #カメラ切替
-        camera.ChangeCamera(num=self.cameraNum)
+        camera.ChangeCamera(num=int(self.cameraNum))
 
     #LPを表示
     def DisplayLP(self):
