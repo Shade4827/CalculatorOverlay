@@ -15,9 +15,8 @@ class Application(tk.Frame):
         super().__init__(master)
         self.pack()
 
-        img = Image.open("test.jpg")
         self.plName = ["Player1","Player2"]
-        self.boxPlace = [[160,740-200],[900,740]]
+        self.boxPlace = [[160,740],[900,740]]
         self.lp = [8000,8000]
         self.lpPlace = [[20,20],[1120,20]]
         self.lpLabel = [tk.Label(root),tk.Label(root)]
@@ -60,8 +59,8 @@ class Application(tk.Frame):
     #ボタン等を作成
     def CreateWigets(self):
         #画像を表示するキャンバス
-        self.canvas = tk.Canvas(root,width=1280,height=720,relief=tk.RIDGE,bd=0)
-        self.canvas.place(x=0,y=10)
+        self.canvas = tk.Canvas(root,width=1280,height=720)
+        self.canvas.place(x=0,y=0)
 
         #名前入力バー
         self.nameBox = [tk.Entry(width=30,font=("",15)),tk.Entry(width=30,font=("",15))]
@@ -85,9 +84,9 @@ class Application(tk.Frame):
     
     #映像を表示
     def DisplayImage(self):
-        frame = camera.ReadImage()
-        img = ImageTk.PhotoImage(Image.fromarray(frame))
-        self.canvas.create_image(0,0,image=img,anchor=tk.NW)
+        self.frame = camera.ReadImage()
+        self.img = ImageTk.PhotoImage(Image.fromarray(self.frame))
+        self.canvas.create_image(0,0,image=self.img,anchor=tk.NW)
         
         self.master.after(50,self.DisplayImage)
 

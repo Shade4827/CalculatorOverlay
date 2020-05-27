@@ -2,7 +2,7 @@ import sys
 sys.path.append('D:/anaconda3/envs/opencv430/Lib/site-packages')
 import cv2
 
-capture = cv2.VideoCapture(0)
+capture = cv2.VideoCapture(1)
 
 def CheckCameraConnection():
     true_camera_is = []  # 空の配列を用意
@@ -24,6 +24,7 @@ def ChangeCamera(num):
 
 def ReadImage():
     ret,frame = capture.read()
+    frame = cv2.resize(frame,dsize=(1280,720))
     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     return frame
 
