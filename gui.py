@@ -16,9 +16,9 @@ class Application(tk.Frame):
         self.pack()
 
         self.plName = ["Player1","Player2"]
-        self.boxPlace = [[160,740],[900,740]]
+        self.boxPlace = [[140,740],[600,740]]
         self.lp = [8000,8000]
-        self.lpPlace = [[20,20],[1120,20]]
+        self.lpPlace = [[20,20],[800,20]]
         self.lpLabel = [tk.Label(root),tk.Label(root)]
         self.damageLog = [[8000],[8000]]
         self.cameraNum = 0
@@ -59,7 +59,7 @@ class Application(tk.Frame):
     #ボタン等を作成
     def CreateWigets(self):
         #画像を表示するキャンバス
-        self.canvas = tk.Canvas(root,width=1280,height=720)
+        self.canvas = tk.Canvas(root,width=960,height=720)
         self.canvas.place(x=0,y=0)
 
         #名前入力バー
@@ -94,7 +94,11 @@ class Application(tk.Frame):
     def SetCamera(self):
         #カメラの番号を取得
         message = "現在のカメラ番号:" + str(self.cameraNum) + "\nカメラ番号(0~"+ str(self.cameras) +")を入力してください"
+        tmp = self.cameraNum
         self.cameraNum = simpledialog.askstring("Input Box", message)
+        if self.cameraNum is None:
+            self.cameraNum = tmp
+            return
         #カメラ切替
         camera.ChangeCamera(num=self.cameraNum)
 
@@ -177,6 +181,6 @@ class Application(tk.Frame):
 root = tk.Tk()        
 myapp = Application(master=root)
 myapp.master.title("CalculatorOverlay") # タイトル
-myapp.master.geometry("1280x800") # ウィンドウの幅と高さピクセル単位で指定（width x height）
+myapp.master.geometry("960x800") # ウィンドウの幅と高さピクセル単位で指定（width x height）
 
 myapp.mainloop()
