@@ -124,16 +124,22 @@ class Application(tk.Frame):
 
     #LP加算
     def AddLP(self,num):
-        val = self.lpBox[num].get()
-        self.lp[num] += int(val)
+        text = self.lpBox[num].get()
+        if text == "":
+            return
+
+        self.lp[num] += int(text)
         
         self.lpBox[num].delete(0,tk.END)
         self.DisplayLP()
 
     #LP減算
     def SubLP(self,num):
-        val = int(self.lpBox[num].get())
-        self.lp[num] -= val
+        text = self.lpBox[num].get()
+        if text == "":
+            return
+
+        self.lp[num] -= int(text)
         if self.lp[num] <= 0:
             self.lp[num] = 0
 
@@ -153,10 +159,11 @@ class Application(tk.Frame):
         if text == "":
             return
 
-        val = int(text)
-        self.lp[num] = val
+        self.lp[num] = int(text)
 
         self.lpBox[num].delete(0,tk.END)
+        
+        self.ChangeName(num)
         self.DisplayLP()
 
     #ダメージログに追加
@@ -182,6 +189,14 @@ class Application(tk.Frame):
 
         self.DisplayLP()
         self.damageLog = [[8000],[8000]]
+
+    #プレイヤー名変更
+    def ChangeName(self,num):
+        text = self.nameBox[num].get()
+        if text == "":
+            return
+
+        self.plName[num] = text
 
 
 # 実行
