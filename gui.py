@@ -17,17 +17,18 @@ class Application(tk.Frame):
 
         img = Image.open("test.jpg")
         self.plName = ["Player1","Player2"]
-        self.boxPlace = [[160,740],[900,740]]
+        self.boxPlace = [[160,740-200],[900,740]]
         self.lp = [8000,8000]
         self.lpPlace = [[20,20],[1120,20]]
         self.lpLabel = [tk.Label(root),tk.Label(root)]
         self.damageLog = [[8000],[8000]]
-
+        self.cameraNum = 0
+        self.cameras = camera.CheckCameraConnection()
+        
         self.CreateMenubar()
         self.CreateWigets()
-        self.DisplayImage(image=img)
-        self.DisplayLP(0)
-        self.DisplayLP(1)
+        self.DisplayImage()
+        self.DisplayLP()
 
     #メニューバーを作成
     def CreateMenubar(self): 
@@ -83,41 +84,41 @@ class Application(tk.Frame):
             changeButton.place(x=self.boxPlace[i][0]-45,y=self.boxPlace[i][1]+30)
     
     #映像を表示
-    def DisplayImage(self,image):
+    def DisplayImage(self):
+        frame = camera.ReadImage()
+        img = ImageTk.PhotoImage(Image.fromarray(frame))
+        self.canvas.create_image(0,0,image=img,anchor=tk.NW)
         
-        self.img_temp = ImageTk.PhotoImage(Image.fromarray(image))
-        self.disp = ImageTk.PhotoImage(image)
-        self.canvas.create_image(0,0,image=self.disp,anchor=tk.NW)
+        self.master.after(50,self.DisplayImage)
 
     #カメラ切替
     def SetCamera(self):
         #カメラの番号を取得
-        num = 10
-        message = "カメラ番号(0~"+ str(num) +")を入力してください"
-        cameraNum = simpledialog.askstring("Input Box", message,)
+        message = "現在のカメラ番号:" + str(self.cameraNum) + "\nカメラ番号(0~"+ str(self.cameras) +")を入力してください"
+        self.cameraNum = simpledialog.askstring("Input Box", message)
         #カメラ切替
-        print(cameraNum)
+        camera.ChangeCamera(num=self.cameraNum)
 
     #LPを表示
-    def DisplayLP(self,num):
+    def DisplayLP(self):
         just = "left"
-        if num == 1:
+        for num in range(2):
+            self.lp[num] = round((self.lp[num] * 2 + 1) // 2)
+            plText = self.plName[num] + "\nLP:" + str(self.lp[num])
+            self.lpLabel[num].destroy()
+            self.lpLabel[num] = tk.Label(root,text=plText,font=("",30),justify=just)
+            self.lpLabel[num].place(x=self.lpPlace[num][0],y=self.lpPlace[num][1])
             just = "right"
-
-        self.lp[num] = round((self.lp[num] * 2 + 1) // 2)
+        
         self.AppendLog()
-
-        plText = self.plName[num] + "\nLP:" + str(self.lp[num])
-        self.lpLabel[num].destroy()
-        self.lpLabel[num] = tk.Label(root,text=plText,font=("",30),justify=just)
-        self.lpLabel[num].place(x=self.lpPlace[num][0],y=self.lpPlace[num][1])
 
     #LP加算
     def AddLP(self,num):
         val = self.lpBox[num].get()
         self.lp[num] += int(val)
+        
         self.lpBox[num].delete(0,tk.END)
-        self.DisplayLP(num)
+        self.DisplayLP()
 
     #LP減算
     def SubLP(self,num):
@@ -125,14 +126,16 @@ class Application(tk.Frame):
         self.lp[num] -= val
         if self.lp[num] <= 0:
             self.lp[num] = 0
+
         self.lpBox[num].delete(0,tk.END)
-        self.DisplayLP(num)
+        self.DisplayLP()
 
     #LP除算
     def DivLP(self,num):
         self.lp[num] /= 2
+
         self.lpBox[num].delete(0,tk.END)
-        self.DisplayLP(num)
+        self.DisplayLP()
 
     #LP変更
     def ChangeLP(self,num):
@@ -142,8 +145,9 @@ class Application(tk.Frame):
 
         val = int(text)
         self.lp[num] = val
+
         self.lpBox[num].delete(0,tk.END)
-        self.DisplayLP(num)
+        self.DisplayLP()
 
     #ダメージログに追加
     def AppendLog(self):
@@ -165,8 +169,8 @@ class Application(tk.Frame):
     def initLP(self):
         for i in range(2):
             self.lp[i] = 8000
-            self.DisplayLP(i)
 
+        self.DisplayLP()
         self.damageLog = [[8000],[8000]]
 
 
