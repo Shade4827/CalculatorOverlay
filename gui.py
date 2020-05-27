@@ -1,5 +1,4 @@
 import sys
-#sys.path.append('D:/anaconda3/envs/opencv430/Lib/site-packages')
 import os
 import numpy as np
 import tkinter as tk
@@ -16,7 +15,7 @@ class Application(tk.Frame):
         self.pack()
 
         self.plName = ["Player1","Player2"]
-        self.boxPlace = [[140,740],[600,740]]
+        self.boxPlace = [[90,680],[650,680]]
         self.lp = [8000,8000]
         self.lpPlace = [[20,20],[800,20]]
         self.lpLabel = [tk.Label(root),tk.Label(root)]
@@ -95,7 +94,7 @@ class Application(tk.Frame):
             self.img = ImageTk.PhotoImage(Image.fromarray(self.frame))
             self.canvas.create_image(0,0,image=self.img,anchor=tk.NW)
         
-        self.master.after(50,self.DisplayImage)
+        self.master.after(10,self.DisplayImage)
 
     #カメラ切替
     def SetCamera(self):
@@ -203,6 +202,6 @@ class Application(tk.Frame):
 root = tk.Tk()        
 myapp = Application(master=root)
 myapp.master.title("CalculatorOverlay") # タイトル
-myapp.master.geometry("960x800") # ウィンドウの幅と高さピクセル単位で指定（width x height）
+myapp.master.geometry("960x740") # ウィンドウの幅と高さピクセル単位で指定（width x height）
 
 myapp.mainloop()
